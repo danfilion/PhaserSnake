@@ -7,7 +7,7 @@
 /build
 /public
 /Notes
-.vsCode
+/.vsCode
 
 # misc
 .DS_Store
