@@ -3,14 +3,18 @@ export default class Snake {
     constructor(scene) {
         this.scene = scene;
         this.lastMoveTime = 0;
-        this.moveInterval = 400;
+        this.moveInterval = 100;
         this.tileSize = 16;
         this.direction = Phaser.Math.Vector2.RIGHT;
         this.body = [];
         this.body.push(this.scene.add.rectangle(this.scene.game.config.width / 2, this.scene.game.config.width / 2, this.tileSize, this.tileSize, 0xff0000).setOrigin(0));
 
-        // this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff));
-        // this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff));
+        //Test values:
+        //  this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff).setOrigin(0));
+        //  this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff).setOrigin(0));
+        //  this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff).setOrigin(0));
+        //  this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff).setOrigin(0));
+        //  this.body.push(this.scene.add.rectangle(0,0,this.tileSize,this.tileSize,0x0000ff).setOrigin(0));
 
         this.apple = this.scene.add.rectangle(0,0, this.tileSize, this.tileSize, 0x00ff00).setOrigin(0);
 
@@ -30,18 +34,21 @@ export default class Snake {
         console.log(event);
         switch (event.keyCode) {
             case 37: //Left
-                this.direction = Phaser.Math.Vector2.LEFT;
+                if (this.direction !== Phaser.Math.Vector2.RIGHT)
+                    this.direction = Phaser.Math.Vector2.LEFT;
                 break;
             case 38: //Up
-                this.direction = Phaser.Math.Vector2.UP;
+                if (this.direction !== Phaser.Math.Vector2.DOWN)
+                    this.direction = Phaser.Math.Vector2.UP;
                 break;
             case 39: //Right
-                this.direction = Phaser.Math.Vector2.RIGHT;
+                if (this.direction !== Phaser.Math.Vector2.LEFT)
+                    this.direction = Phaser.Math.Vector2.RIGHT;
                 break;
             case 40: //Down
-                this.direction = Phaser.Math.Vector2.DOWN;
+            if (this.direction !== Phaser.Math.Vector2.UP)
+                    this.direction = Phaser.Math.Vector2.DOWN;
                 break;
-            
         }
     }
 
@@ -71,13 +78,20 @@ export default class Snake {
         this.body[0].x = x;
         this.body[0].y = y;
 
-         if (
+        //Snake die on edges.
+        if (
              this.body[0].x < 0 || 
              this.body[0].x >= this.scene.game.config.width || 
              this.body[0].y < 0 || 
              this.body[0].y >= this.scene.game.config.height) 
-         {
-             this.scene.scene.restart();
+        {
+            this.scene.scene.restart();
+        }
+        //Die on tail collision.
+        let tail = this.body.slice(1);
+        //if (tail.filter(s => s.x === this.body[0].x && s.y === this.body[0].y).length > 0) {
+        if (tail.some(s => s.x === this.body[0].x && s.y === this.body[0].y)) {
+            this.scene.scene.restart();
          }
     }
 }
